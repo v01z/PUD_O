@@ -1,11 +1,13 @@
 #include "PackageUseDirHandler.h"
 #include <filesystem>
 #include <fstream>
-#include <iostream> //debug?
+#include <iostream>
 
 //-----------------------------------------------------------------
 
 PackageUseDirHandler::PackageUseDirHandler() {
+
+  makeBackup();
 
   std::vector<std::string> configsPaths;
   getFilesPaths(configsPaths, PACKAGE_USE_DIR);
@@ -32,7 +34,7 @@ bool PackageUseDirHandler::makeBackup() const {
     std::cout << err.message() << '\n'; // debug?
     return false;
   } else
-    std::cout << "Backup of " << PACKAGE_USE_DIR << " created on " << // debug?
+    std::cout << "Backup of " << PACKAGE_USE_DIR << " created on " <<
         TEMP_DIR << '\n';
   return true;
 }
@@ -45,7 +47,7 @@ PackageUseDirHandler::getFileBuff(const std::string &fileName) const {
   std::ifstream file(fileName, std::ios::binary);
 
   if (!file.is_open())
-    return retValVec; // return empty vector. mb change to std::optional
+    return retValVec;
 
   file.seekg(0, std::ios_base::end);
   auto file_length = file.tellg();

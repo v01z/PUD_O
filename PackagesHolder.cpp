@@ -1,6 +1,5 @@
 #include "PackagesHolder.h"
 #include <algorithm>
-#include <iostream>
 #include <regex>
 
 //-----------------------------------------------------------------
