@@ -7,6 +7,8 @@
 
 PackageUseDirHandler::PackageUseDirHandler() {
 
+  // TOD0: if /etc/portage/package.use not exists, then exit
+
   makeBackup();
 
   std::vector<std::string> configsPaths;
@@ -16,6 +18,7 @@ PackageUseDirHandler::PackageUseDirHandler() {
 
   packagesHolder.sort();
 
+  // debug
   for (size_t i{}; i < packagesHolder.getPackages().size(); ++i)
     std::cout << packagesHolder.getPackages().at(i).getFullPackageInfoStr()
               << std::endl;

@@ -249,6 +249,8 @@ PackageVersion::getIntsFromStr(const std::string &inputStr) const {
   return retValVec;
 }
 
+//-----------------------------------------------------------------
+
 PackageVersion::PackageVersion(const std::string &version) : value_{version} {}
 
 //-----------------------------------------------------------------

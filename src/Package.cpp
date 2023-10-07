@@ -66,7 +66,7 @@ bool Package::operator==(const Package &other) const {
 
 bool Package::operator>(const Package &other) const {
   if (isBasicallyTheSame(other)) {
-    // compareSigns?
+    // TOD0: compareSigns?
     return this->version_ > other.version_;
   }
   return false;
@@ -76,7 +76,7 @@ bool Package::operator>(const Package &other) const {
 
 bool Package::operator<(const Package &other) const {
   if (isBasicallyTheSame(other)) {
-    // compareSigns?
+    // TOD0: compareSigns?
     return this->version_ < other.version_;
   }
   return false;

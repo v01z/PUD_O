@@ -6,7 +6,8 @@
 //-----------------------------------------------------------------
 
 class PackageUseDirHandler {
-  const std::string PACKAGE_USE_DIR{"/etc/portage/package.use"};
+  //const std::string PACKAGE_USE_DIR{"/etc/portage/package.use"};
+  const std::string PACKAGE_USE_DIR{"~/temp/package.use"};
   const std::string TEMP_DIR{"/tmp/backup_of_package_use"};
 
   PackagesHolder packagesHolder;
