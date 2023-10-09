@@ -1,7 +1,5 @@
 #include "PackageUseDirHandler.h"
-#include <filesystem>
 #include <fstream>
-#include <iostream>
 
 //-----------------------------------------------------------------
 
@@ -9,37 +7,34 @@ PackageUseDirHandler::PackageUseDirHandler() {
 
   // TOD0: if /etc/portage/package.use not exists, then exit
 
-  makeBackup();
+  try {
+    makeBackup();
 
-  std::vector<std::string> configsPaths;
-  getFilesPaths(configsPaths, PACKAGE_USE_DIR);
-  for (const auto &path : configsPaths)
-    updatePackageHolder(getFileBuff(path));
+    std::vector<std::string> configsPaths;
+    getFilesPaths(configsPaths, PACKAGE_USE_DIR_PATH);
+    for (const auto &path : configsPaths)
+      updatePackageHolder(getFileBuff(path));
 
-  packagesHolder.sort();
-
-  // debug
-  for (size_t i{}; i < packagesHolder.getPackages().size(); ++i)
-    std::cout << packagesHolder.getPackages().at(i).getFullPackageInfoStr()
-              << std::endl;
-  std::cout << "Size is: " << packagesHolder.getPackages().size() << std::endl;
+    packagesHolder.sort();
+  }
+  catch (...) {
+    throw;
+  }
 }
 
 //-----------------------------------------------------------------
 
-bool PackageUseDirHandler::makeBackup() const {
-  auto err = std::error_code{};
-  std::filesystem::copy(PACKAGE_USE_DIR, TEMP_DIR,
-                        std::filesystem::copy_options::recursive |
-                            std::filesystem::copy_options::update_existing,
-                        err);
-  if (err) {
-    std::cout << err.message() << '\n'; // debug?
-    return false;
-  } else
-    std::cout << "Backup of " << PACKAGE_USE_DIR << " created on " <<
-        TEMP_DIR << '\n';
-  return true;
+void PackageUseDirHandler::makeBackup() const {
+  try {
+    std::filesystem::copy(
+        PACKAGE_USE_DIR_PATH, TEMP_DIR_STR,
+        std::filesystem::copy_options::recursive |
+            std::filesystem::copy_options::update_existing);
+  }
+  catch(...)
+  {
+    throw;
+  }
 }
 
 //-----------------------------------------------------------------
@@ -84,15 +79,18 @@ void PackageUseDirHandler::updatePackageHolder(
 //-----------------------------------------------------------------
 
 void PackageUseDirHandler::getFilesPaths(std::vector<std::string> &pathsVec,
-                                         const std::string &currentDir) const {
+  const std::filesystem::path &currentDir) const {
 
-  for (const auto &file : std::filesystem::directory_iterator(currentDir)) {
+    for (const auto &file : std::filesystem::directory_iterator(currentDir)) {
     if (std::filesystem::is_directory(file)) {
-      getFilesPaths(pathsVec, file.path().string());
+      getFilesPaths(pathsVec, file.path());
     } else {
       pathsVec.push_back(file.path().string());
     }
   }
+}
+const PackagesHolder &PackageUseDirHandler::getPackagesHoler() const {
+  return packagesHolder;
 }
 
 //-----------------------------------------------------------------
