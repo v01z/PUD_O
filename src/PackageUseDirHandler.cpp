@@ -3,19 +3,25 @@
 
 //-----------------------------------------------------------------
 
-PackageUseDirHandler::PackageUseDirHandler() {
+PackageUseDirHandler::PackageUseDirHandler(std::initializer_list<std::string> excludeList):
+  filesToExclude_{excludeList}, packagesHolder_{}
+{
 
-  // TOD0: if /etc/portage/package.use not exists, then exit
+  //
+  //filesToExclude_.insert("/home/knight/temp/package.use/steam");
+  //
 
   try {
     makeBackup();
 
     std::vector<std::string> configsPaths;
     getFilesPaths(configsPaths, PACKAGE_USE_DIR_PATH);
-    for (const auto &path : configsPaths)
+    for (const auto &path : configsPaths) {
       updatePackageHolder(getFileBuff(path));
+      std::filesystem::remove(path);
+    }
 
-    packagesHolder.sort();
+    packagesHolder_.sort();
   }
   catch (...) {
     throw;
@@ -72,7 +78,7 @@ void PackageUseDirHandler::updatePackageHolder(
   std::string tempStr{};
   std::stringstream ss(std::string(uCharsBuff.begin(), uCharsBuff.end()));
   while (std::getline(ss, tempStr, '\n')) {
-    packagesHolder.addPackage(tempStr);
+    packagesHolder_.addPackage(tempStr);
   }
 }
 
@@ -85,12 +91,30 @@ void PackageUseDirHandler::getFilesPaths(std::vector<std::string> &pathsVec,
     if (std::filesystem::is_directory(file)) {
       getFilesPaths(pathsVec, file.path());
     } else {
-      pathsVec.push_back(file.path().string());
+      auto filePathStr = file.path().string();
+
+      if(!filesToExclude_.contains(filePathStr) && !filePathStr.empty())
+        pathsVec.push_back(filePathStr);
     }
   }
 }
-const PackagesHolder &PackageUseDirHandler::getPackagesHoler() const {
-  return packagesHolder;
+
+//-----------------------------------------------------------------
+
+const PackagesHolder &PackageUseDirHandler::getPackagesHolder() const {
+  return packagesHolder_;
+}
+
+//-----------------------------------------------------------------
+
+void PackageUseDirHandler::removeFile(const std::string& fileToRemove) {
+  try{
+    std::filesystem::remove(fileToRemove);
+  }
+  catch(...)
+  {
+    throw;
+  }
 }
 
 //-----------------------------------------------------------------
