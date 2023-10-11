@@ -3,7 +3,7 @@
 
 //-----------------------------------------------------------------
 
-PackageUseDirHandler::PackageUseDirHandler(std::initializer_list<std::string> excludeList):
+PackageUseDirHandler::PackageUseDirHandler(const std::set<std::string> &excludeList):
   filesToExclude_{excludeList}, packagesHolder_{}
 {
 
@@ -13,12 +13,13 @@ PackageUseDirHandler::PackageUseDirHandler(std::initializer_list<std::string> ex
 
   try {
     makeBackup();
+    correctExcludeFilesPaths();
 
     std::vector<std::string> configsPaths;
     getFilesPaths(configsPaths, PACKAGE_USE_DIR_PATH);
     for (const auto &path : configsPaths) {
       updatePackageHolder(getFileBuff(path));
-      std::filesystem::remove(path);
+      removeFile(path);
     }
 
     packagesHolder_.sort();
@@ -114,6 +115,15 @@ void PackageUseDirHandler::removeFile(const std::string& fileToRemove) {
   catch(...)
   {
     throw;
+  }
+}
+
+//-----------------------------------------------------------------
+
+void PackageUseDirHandler::correctExcludeFilesPaths() {
+  for (auto path : filesToExclude_)
+  {
+    // continue here
   }
 }
 

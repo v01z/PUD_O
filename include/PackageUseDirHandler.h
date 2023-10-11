@@ -21,10 +21,11 @@ class PackageUseDirHandler {
   void updatePackageHolder(const std::vector<unsigned char> &);
   void getFilesPaths(std::vector<std::string> &, const std::filesystem::path&) const;
   void removeFile(const std::string&);
+  void correctExcludeFilesPaths();
 
 public:
   PackageUseDirHandler() = delete;
-  PackageUseDirHandler(std::initializer_list<std::string>);
+  PackageUseDirHandler(const std::set<std::string>&);
   const PackagesHolder &getPackagesHolder() const;
 };
 
