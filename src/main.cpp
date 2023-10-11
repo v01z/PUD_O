@@ -18,19 +18,16 @@ int main(int argc, char **argv) {
     return EXIT_SUCCESS;
   }
 
-  std::set<std::string> argvSet{};
-  if (argc > 1)
-  {
-    for (size_t i{ 1 }; i < argc; ++i)
-    {
-      argvSet.insert(argv[i]);
-    }
+  std::vector<std::filesystem::path> argvVec{};
+
+  if(argc > 2 && std::string(argv[1]) == "--exclude") {
+      for (size_t i{ 2 }; i < argc; ++i) {
+        argvVec.push_back(argv[i]);
+      }
   }
 
-  //argvSet.insert("/home/knight/temp/package.use/steam");
-
   try {
-    PackageUseDirHandler packageUseDirHandler{ std::move(argvSet) };
+    PackageUseDirHandler packageUseDirHandler{ std::move(argvVec) };
     debugShowPackages(packageUseDirHandler);
   }
   catch(std::exception &exc)

@@ -1,19 +1,16 @@
 #include "PackageUseDirHandler.h"
 #include <fstream>
+#include <algorithm>
 
 //-----------------------------------------------------------------
 
-PackageUseDirHandler::PackageUseDirHandler(const std::set<std::string> &excludeList):
+PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::path> &excludeList):
   filesToExclude_{excludeList}, packagesHolder_{}
 {
 
-  //
-  //filesToExclude_.insert("/home/knight/temp/package.use/steam");
-  //
-
   try {
-    makeBackup();
     correctExcludeFilesPaths();
+    makeBackup();
 
     std::vector<std::string> configsPaths;
     getFilesPaths(configsPaths, PACKAGE_USE_DIR_PATH);
@@ -94,8 +91,11 @@ void PackageUseDirHandler::getFilesPaths(std::vector<std::string> &pathsVec,
     } else {
       auto filePathStr = file.path().string();
 
-      if(!filesToExclude_.contains(filePathStr) && !filePathStr.empty())
+      if(std::find(filesToExclude_.begin(), filesToExclude_.end(),
+                    filePathStr) == filesToExclude_.end())
+      {
         pathsVec.push_back(filePathStr);
+      }
     }
   }
 }
@@ -121,9 +121,13 @@ void PackageUseDirHandler::removeFile(const std::string& fileToRemove) {
 //-----------------------------------------------------------------
 
 void PackageUseDirHandler::correctExcludeFilesPaths() {
-  for (auto path : filesToExclude_)
+
+  for (auto &path : filesToExclude_)
   {
-    // continue here
+    if(path.has_parent_path() && path.parent_path() == PACKAGE_USE_DIR_PATH)
+      continue;
+
+    path = PACKAGE_USE_DIR_PATH.string() / path.filename();
   }
 }
 

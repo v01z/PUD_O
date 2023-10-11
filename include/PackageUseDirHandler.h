@@ -12,7 +12,7 @@ class PackageUseDirHandler {
   //const std::filesystem::path PACKAGE_USE_DIR_PATH{"~/temp/package.use"};
   const std::string TEMP_DIR_STR{"/tmp/backup_of_package_use"};
 
-  std::set<std::string> filesToExclude_;
+  std::vector<std::filesystem::path> filesToExclude_;
   PackagesHolder packagesHolder_;
 
   void makeBackup() const;
@@ -25,7 +25,7 @@ class PackageUseDirHandler {
 
 public:
   PackageUseDirHandler() = delete;
-  PackageUseDirHandler(const std::set<std::string>&);
+  PackageUseDirHandler(const std::vector<std::filesystem::path>&);
   const PackagesHolder &getPackagesHolder() const;
 };
 
