@@ -7,13 +7,11 @@
 //-----------------------------------------------------------------
 
 class PackageUseDirHandler {
-  //const std::filesystem::path PACKAGE_USE_DIR_PATH{"/etc/portage/package.use"};
-  const std::filesystem::path PACKAGE_USE_DIR_PATH{"/home/knight/temp/package.use"};
-  //const std::filesystem::path PACKAGE_USE_DIR_PATH{"~/temp/package.use"};
   const std::string TEMP_DIR_STR{"/tmp/backup_of_package_use"};
 
   std::vector<std::filesystem::path> filesToExclude_;
   PackagesHolder packagesHolder_;
+  const std::filesystem::path PACKAGE_USE_DIR_PATH;
 
   void makeBackup() const;
 
@@ -25,7 +23,9 @@ class PackageUseDirHandler {
 
 public:
   PackageUseDirHandler() = delete;
-  PackageUseDirHandler(const std::vector<std::filesystem::path>&);
+  PackageUseDirHandler(const std::vector<std::filesystem::path>&,
+      // start here. /etc/portage/package.use/make.conf
+      const std::filesystem::path& packageUseDir = "/home/knight/temp/package.use");
   const PackagesHolder &getPackagesHolder() const;
 };
 

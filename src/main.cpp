@@ -14,7 +14,8 @@ int main(int argc, char **argv) {
 
   if (argc == 2 && std::string(argv[1]) == "--help")
   {
-    std::cout << "Usage: " << argv[0] << " \'files to exclude\'\n";
+    std::cout << "Usage:\n" << argv[0] << std::endl <<
+        "or:\n" << argv[0] << " --exclude \'files to exclude\'\n";
     return EXIT_SUCCESS;
   }
 

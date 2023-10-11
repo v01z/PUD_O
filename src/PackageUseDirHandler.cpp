@@ -4,8 +4,9 @@
 
 //-----------------------------------------------------------------
 
-PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::path> &excludeList):
-  filesToExclude_{excludeList}, packagesHolder_{}
+PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::path> &excludeList,
+  const std::filesystem::path& packageUseDir):
+  filesToExclude_{ excludeList }, packagesHolder_{}, PACKAGE_USE_DIR_PATH{ packageUseDir }
 {
 
   try {
