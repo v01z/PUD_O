@@ -1,20 +1,20 @@
 #include "PackageUseDirHandler.h"
 #include <fstream>
 #include <algorithm>
+#include <iostream>
 
 //-----------------------------------------------------------------
 
-PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::path> &excludeList,
-  const std::filesystem::path& packageUseDir):
-  filesToExclude_{ excludeList }, packagesHolder_{}, PACKAGE_USE_DIR_PATH{ packageUseDir }
+PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::path> &excludeList):
+  filesToExclude_{ excludeList }, packagesHolder_{}
 {
 
   try {
     correctExcludeFilesPaths();
     makeBackup();
 
-    std::vector<std::string> configsPaths;
-    getFilesPaths(configsPaths, PACKAGE_USE_DIR_PATH);
+    std::vector<std::filesystem::path> configsPaths;
+    getFilesPaths(configsPaths, PACKAGE_USE_DIR);
     for (const auto &path : configsPaths) {
       updatePackageHolder(getFileBuff(path));
       removeFile(path);
@@ -31,10 +31,12 @@ PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::pa
 
 void PackageUseDirHandler::makeBackup() const {
   try {
-    std::filesystem::copy(
-        PACKAGE_USE_DIR_PATH, TEMP_DIR_STR,
+    std::filesystem::copy(PACKAGE_USE_DIR, TEMP_DIR_STR,
         std::filesystem::copy_options::recursive |
             std::filesystem::copy_options::update_existing);
+
+    std::cout << "\nBackup of configs from " << PACKAGE_USE_DIR << " created in "
+      << TEMP_DIR_STR << ".\n";
   }
   catch(...)
   {
@@ -45,9 +47,9 @@ void PackageUseDirHandler::makeBackup() const {
 //-----------------------------------------------------------------
 
 const std::vector<unsigned char>
-PackageUseDirHandler::getFileBuff(const std::string &fileName) const {
+PackageUseDirHandler::getFileBuff(const std::filesystem::path &fileName) const {
   std::vector<unsigned char> retValVec{};
-  std::ifstream file(fileName, std::ios::binary);
+  std::ifstream file(fileName.string(), std::ios::binary);
 
   if (!file.is_open())
     return retValVec;
@@ -83,7 +85,7 @@ void PackageUseDirHandler::updatePackageHolder(
 
 //-----------------------------------------------------------------
 
-void PackageUseDirHandler::getFilesPaths(std::vector<std::string> &pathsVec,
+void PackageUseDirHandler::getFilesPaths(std::vector<std::filesystem::path> &pathsVec,
   const std::filesystem::path &currentDir) const {
 
     for (const auto &file : std::filesystem::directory_iterator(currentDir)) {
@@ -109,7 +111,7 @@ const PackagesHolder &PackageUseDirHandler::getPackagesHolder() const {
 
 //-----------------------------------------------------------------
 
-void PackageUseDirHandler::removeFile(const std::string& fileToRemove) {
+void PackageUseDirHandler::removeFile(const std::string& fileToRemove) const{
   try{
     std::filesystem::remove(fileToRemove);
   }
@@ -125,11 +127,18 @@ void PackageUseDirHandler::correctExcludeFilesPaths() {
 
   for (auto &path : filesToExclude_)
   {
-    if(path.has_parent_path() && path.parent_path() == PACKAGE_USE_DIR_PATH)
+    if(path.has_parent_path() && path.parent_path() == PACKAGE_USE_DIR)
       continue;
 
-    path = PACKAGE_USE_DIR_PATH.string() / path.filename();
+    path = PACKAGE_USE_DIR.string() / path.filename();
   }
+}
+
+//-----------------------------------------------------------------
+
+void PackageUseDirHandler::generateNewConfigFiles
+    (const std::vector<std::filesystem::path>& configsPaths) const {
+  // continue here
 }
 
 //-----------------------------------------------------------------

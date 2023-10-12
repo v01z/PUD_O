@@ -10,6 +10,8 @@ void debugShowPackages(const PackageUseDirHandler &packageUseDirHandler){
   << std::endl;
 }
 
+//-----------------------------------------------------------------
+
 int main(int argc, char **argv) {
 
   if (argc == 2 && std::string(argv[1]) == "--help")
@@ -39,3 +41,5 @@ int main(int argc, char **argv) {
 
   return EXIT_SUCCESS;
 }
+
+//-----------------------------------------------------------------
