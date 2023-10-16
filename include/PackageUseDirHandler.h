@@ -7,7 +7,9 @@
 //-----------------------------------------------------------------
 
 class PackageUseDirHandler {
-  const std::filesystem::path PACKAGE_USE_DIR{"/home/knight/temp/package.use" };
+  // const std::filesystem::path PACKAGE_USE_DIR{"/home/knight/temp/package.use"
+  // };
+  const std::filesystem::path PACKAGE_USE_DIR{"/home/bcat/temp/package.use"};
   const std::filesystem::path TEMP_DIR_STR{"/tmp/backup_of_package_use"};
 
   std::vector<std::filesystem::path> filesToExclude_;
@@ -15,17 +17,19 @@ class PackageUseDirHandler {
 
   void makeBackup() const;
 
-  const std::vector<unsigned char> getFileBuff(const std::filesystem::path&) const;
+  const std::vector<unsigned char>
+  getFileBuff(const std::filesystem::path &) const;
   void updatePackageHolder(const std::vector<unsigned char> &);
-  void fillFilesPaths(std::vector<std::filesystem::path> &, const std::filesystem::path&) const;
-  void removeFile(const std::string&) const;
+  void fillFilesPaths(std::vector<std::filesystem::path> &,
+                      const std::filesystem::path &) const;
+  void removeFile(const std::string &) const;
   void correctExcludeFilesPaths();
   void generateNewConfigFiles() const;
-  const std::filesystem::path getNewConfigPath(const std::string&) const;
+  const std::filesystem::path getNewConfigPath(const std::string &) const;
 
 public:
   PackageUseDirHandler() = delete;
-  PackageUseDirHandler(const std::vector<std::filesystem::path>&);
+  explicit PackageUseDirHandler(const std::vector<std::filesystem::path> &);
   const PackagesHolder &getPackagesHolder() const;
 };
 

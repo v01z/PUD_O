@@ -1,13 +1,13 @@
 #include "PackageUseDirHandler.h"
-#include <fstream>
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 
 //-----------------------------------------------------------------
 
-PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::path> &excludeList):
-  filesToExclude_{ excludeList }, packagesHolder_{}
-{
+PackageUseDirHandler::PackageUseDirHandler(
+    const std::vector<std::filesystem::path> &excludeList)
+    : filesToExclude_{excludeList}, packagesHolder_{} {
 
   try {
     correctExcludeFilesPaths();
@@ -21,11 +21,10 @@ PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::pa
     }
 
     packagesHolder_.sort();
-    //debug:
+    // debug:
     generateNewConfigFiles();
-    //end debug
-  }
-  catch (...) {
+    // end debug
+  } catch (...) {
     throw;
   }
 }
@@ -35,14 +34,12 @@ PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::pa
 void PackageUseDirHandler::makeBackup() const {
   try {
     std::filesystem::copy(PACKAGE_USE_DIR, TEMP_DIR_STR,
-        std::filesystem::copy_options::recursive |
-            std::filesystem::copy_options::update_existing);
+                          std::filesystem::copy_options::recursive |
+                              std::filesystem::copy_options::update_existing);
 
-    std::cout << "\nBackup of configs from " << PACKAGE_USE_DIR << " created in "
-      << TEMP_DIR_STR << ".\n";
-  }
-  catch(...)
-  {
+    std::cout << "\nBackup of configs from " << PACKAGE_USE_DIR
+              << " created in " << TEMP_DIR_STR << ".\n";
+  } catch (...) {
     throw;
   }
 }
@@ -88,18 +85,18 @@ void PackageUseDirHandler::updatePackageHolder(
 
 //-----------------------------------------------------------------
 
-void PackageUseDirHandler::fillFilesPaths(std::vector<std::filesystem::path> &pathsVec,
-  const std::filesystem::path &currentDir) const {
+void PackageUseDirHandler::fillFilesPaths(
+    std::vector<std::filesystem::path> &pathsVec,
+    const std::filesystem::path &currentDir) const {
 
-    for (const auto &file : std::filesystem::directory_iterator(currentDir)) {
+  for (const auto &file : std::filesystem::directory_iterator(currentDir)) {
     if (std::filesystem::is_directory(file)) {
       fillFilesPaths(pathsVec, file.path());
     } else {
       auto filePathStr = file.path().string();
 
-      if(std::find(filesToExclude_.begin(), filesToExclude_.end(),
-                    filePathStr) == filesToExclude_.end())
-      {
+      if (std::find(filesToExclude_.begin(), filesToExclude_.end(),
+                    filePathStr) == filesToExclude_.end()) {
         pathsVec.push_back(filePathStr);
       }
     }
@@ -114,12 +111,10 @@ const PackagesHolder &PackageUseDirHandler::getPackagesHolder() const {
 
 //-----------------------------------------------------------------
 
-void PackageUseDirHandler::removeFile(const std::string& fileToRemove) const{
-  try{
+void PackageUseDirHandler::removeFile(const std::string &fileToRemove) const {
+  try {
     std::filesystem::remove(fileToRemove);
-  }
-  catch(...)
-  {
+  } catch (...) {
     throw;
   }
 }
@@ -128,9 +123,8 @@ void PackageUseDirHandler::removeFile(const std::string& fileToRemove) const{
 
 void PackageUseDirHandler::correctExcludeFilesPaths() {
 
-  for (auto &path : filesToExclude_)
-  {
-    if(path.has_parent_path() && path.parent_path() == PACKAGE_USE_DIR)
+  for (auto &path : filesToExclude_) {
+    if (path.has_parent_path() && path.parent_path() == PACKAGE_USE_DIR)
       continue;
 
     path = PACKAGE_USE_DIR.string() / path.filename();
@@ -141,31 +135,63 @@ void PackageUseDirHandler::correctExcludeFilesPaths() {
 
 void PackageUseDirHandler::generateNewConfigFiles() const {
 
-  //debug
-  std::filesystem::path currentPath = getNewConfigPath(packagesHolder_.getPackages().at(0).getCategory());
+  // debug
+  Package currentPackage = packagesHolder_.getPackages().at(0);
+  std::filesystem::path currentPath =
+      getNewConfigPath(currentPackage.getCategory());
+  std::string currentPackageStr = currentPackage.getFullPackageInfoStr();
+
+  std::cout << "\n**************\n";
   std::cout << currentPath << '\n';
-  size_t countOfFiles{ 1 };
+  std::cout << currentPackageStr << '\n';
+  size_t countOfFiles{1};
 
   /*
-  std::ofstream currentFile(currentPath.string(), std::ios::app | std::ios::binary);
-  if(currentFile.is_open())
+  std::ofstream currentFile(currentPath.string(), std::ios::app |
+  std::ios::binary); if(currentFile.is_open())
     currentFile.write(reinterpret_cast<char *>(currentPath.string().data()),
                       currentPath.string().size());
                       */
+  std::ofstream currentFile(currentPath.string(),
+                            std::ios::app | std::ios::binary);
 
+  if (currentFile.is_open())
+    currentFile.write(reinterpret_cast<char *>(currentPackageStr.data()),
+                      currentPackageStr.size());
 
-  for(size_t i{ 1 }; i < packagesHolder_.getPackages().size(); ++i)
-  {
-    std::filesystem::path nextPath = getNewConfigPath(packagesHolder_.getPackages().at(i).getCategory());
-    if(nextPath != currentPath)
-    {
+  Package previousPackage = currentPackage; // needs to implement operator=
+
+  for (size_t i{1}; i < packagesHolder_.getPackages().size(); ++i) {
+    //
+    currentPackage = packagesHolder_.getPackages().at(i);
+    if (previousPackage.getCategory() != currentPackage.getCategory()) {
+      currentFile.close();
+      currentPath = getNewConfigPath(currentPackage.getCategory());
+      currentFile =
+          std::ifstream(currentPath.string(), std::ios::app | std::ios::binary);
+      ++countOfFiles;
+    }
+    if (currentFile.is_open())
+      currentFile.write(reinterpret_cast<char *>(currentPackageStr.data(),
+                                                 currentPackageStr.size()));
+
+    previousPackage = currentPackage; // need to implement Package::operator=
+
+    //
+    // here: write to file current package str
+    //
+    // std::filesystem::path nextPath =
+    //   getNewConfigPath(packagesHolder_.getPackages().at(i).getCategory());
+    /*
+    if (nextPath != currentPath) {
       currentPath = nextPath;
       ++countOfFiles;
       std::cout << currentPath << '\n';
     }
+*/
   }
   std::cout << "\nCount of files: " << countOfFiles << std::endl;
-  //end debug
+  // end debug
 }
 
 //-----------------------------------------------------------------
@@ -175,12 +201,12 @@ PackageUseDirHandler::getNewConfigPath(const std::string &inputStr) const {
 
   std::string tempStr{};
 
-  if(std::size_t found = inputStr.find('-', 0); found != std::string::npos)
+  if (std::size_t found = inputStr.find('-', 0); found != std::string::npos)
     tempStr = inputStr.substr(0, found);
   else
     tempStr = inputStr;
 
-  return std::filesystem::path{ PACKAGE_USE_DIR / tempStr};
+  return std::filesystem::path{PACKAGE_USE_DIR / tempStr};
 }
 
 //-----------------------------------------------------------------
