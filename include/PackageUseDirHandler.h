@@ -17,10 +17,11 @@ class PackageUseDirHandler {
 
   const std::vector<unsigned char> getFileBuff(const std::filesystem::path&) const;
   void updatePackageHolder(const std::vector<unsigned char> &);
-  void getFilesPaths(std::vector<std::filesystem::path> &, const std::filesystem::path&) const;
+  void fillFilesPaths(std::vector<std::filesystem::path> &, const std::filesystem::path&) const;
   void removeFile(const std::string&) const;
   void correctExcludeFilesPaths();
-  void generateNewConfigFiles(const std::vector<std::filesystem::path>&) const;
+  void generateNewConfigFiles() const;
+  const std::filesystem::path getNewConfigPath(const std::string&) const;
 
 public:
   PackageUseDirHandler() = delete;

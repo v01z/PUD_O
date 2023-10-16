@@ -14,13 +14,16 @@ PackageUseDirHandler::PackageUseDirHandler(const std::vector<std::filesystem::pa
     makeBackup();
 
     std::vector<std::filesystem::path> configsPaths;
-    getFilesPaths(configsPaths, PACKAGE_USE_DIR);
+    fillFilesPaths(configsPaths, PACKAGE_USE_DIR);
     for (const auto &path : configsPaths) {
       updatePackageHolder(getFileBuff(path));
       removeFile(path);
     }
 
     packagesHolder_.sort();
+    //debug:
+    generateNewConfigFiles();
+    //end debug
   }
   catch (...) {
     throw;
@@ -85,12 +88,12 @@ void PackageUseDirHandler::updatePackageHolder(
 
 //-----------------------------------------------------------------
 
-void PackageUseDirHandler::getFilesPaths(std::vector<std::filesystem::path> &pathsVec,
+void PackageUseDirHandler::fillFilesPaths(std::vector<std::filesystem::path> &pathsVec,
   const std::filesystem::path &currentDir) const {
 
     for (const auto &file : std::filesystem::directory_iterator(currentDir)) {
     if (std::filesystem::is_directory(file)) {
-      getFilesPaths(pathsVec, file.path());
+      fillFilesPaths(pathsVec, file.path());
     } else {
       auto filePathStr = file.path().string();
 
@@ -136,9 +139,44 @@ void PackageUseDirHandler::correctExcludeFilesPaths() {
 
 //-----------------------------------------------------------------
 
-void PackageUseDirHandler::generateNewConfigFiles
-    (const std::vector<std::filesystem::path>& configsPaths) const {
+void PackageUseDirHandler::generateNewConfigFiles() const {
   // continue here
+  //debug
+  /*
+  for (const auto elem : packagesHolder_.getPackages())
+  {
+    //std::cout << getNewConfigPath(elem.getCategory()) << std::endl;
+    std::filesystem::path currentPath = getNewConfigPath(elem.getCategory());
+  }
+   */
+
+  std::filesystem::path currentPath = getNewConfigPath(packagesHolder_.getPackages().at(0).getCategory());
+  std::cout << currentPath << '\n';
+  size_t countOfFiles{ 1 };
+
+  for(size_t i{ 1 }; i < packagesHolder_.getPackages().size(); ++i)
+  {
+    std::filesystem::path nextPath = getNewConfigPath(packagesHolder_.getPackages().at(i).getCategory());
+    if(nextPath != currentPath)
+    {
+      currentPath = nextPath;
+      ++countOfFiles;
+      std::cout << currentPath << '\n';
+    }
+  }
+  std::cout << "\nCount of files: " << countOfFiles << std::endl;
+  //end debug
+}
+
+//-----------------------------------------------------------------
+
+const std::filesystem::path
+PackageUseDirHandler::getNewConfigPath(const std::string &categoryStr) const {
+
+  std::string tempStr { categoryStr };
+  std::replace(tempStr.begin(), tempStr.end(), '-', '_');
+
+  return std::filesystem::path{ PACKAGE_USE_DIR / tempStr };
 }
 
 //-----------------------------------------------------------------
