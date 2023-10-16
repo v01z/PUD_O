@@ -140,19 +140,19 @@ void PackageUseDirHandler::correctExcludeFilesPaths() {
 //-----------------------------------------------------------------
 
 void PackageUseDirHandler::generateNewConfigFiles() const {
-  // continue here
-  //debug
-  /*
-  for (const auto elem : packagesHolder_.getPackages())
-  {
-    //std::cout << getNewConfigPath(elem.getCategory()) << std::endl;
-    std::filesystem::path currentPath = getNewConfigPath(elem.getCategory());
-  }
-   */
 
+  //debug
   std::filesystem::path currentPath = getNewConfigPath(packagesHolder_.getPackages().at(0).getCategory());
   std::cout << currentPath << '\n';
   size_t countOfFiles{ 1 };
+
+  /*
+  std::ofstream currentFile(currentPath.string(), std::ios::app | std::ios::binary);
+  if(currentFile.is_open())
+    currentFile.write(reinterpret_cast<char *>(currentPath.string().data()),
+                      currentPath.string().size());
+                      */
+
 
   for(size_t i{ 1 }; i < packagesHolder_.getPackages().size(); ++i)
   {
@@ -171,12 +171,16 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
 //-----------------------------------------------------------------
 
 const std::filesystem::path
-PackageUseDirHandler::getNewConfigPath(const std::string &categoryStr) const {
+PackageUseDirHandler::getNewConfigPath(const std::string &inputStr) const {
 
-  std::string tempStr { categoryStr };
-  std::replace(tempStr.begin(), tempStr.end(), '-', '_');
+  std::string tempStr{};
 
-  return std::filesystem::path{ PACKAGE_USE_DIR / tempStr };
+  if(std::size_t found = inputStr.find('-', 0); found != std::string::npos)
+    tempStr = inputStr.substr(0, found);
+  else
+    tempStr = inputStr;
+
+  return std::filesystem::path{ PACKAGE_USE_DIR / tempStr};
 }
 
 //-----------------------------------------------------------------
