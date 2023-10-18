@@ -254,3 +254,14 @@ PackageVersion::getIntsFromStr(const std::string &inputStr) const {
 PackageVersion::PackageVersion(const std::string &version) : value_{version} {}
 
 //-----------------------------------------------------------------
+
+PackageVersion &PackageVersion::operator=(const PackageVersion &other) {
+  if(this == &other)
+    return *this;
+
+  value_ = other.value_;
+
+  return *this;
+}
+
+//-----------------------------------------------------------------

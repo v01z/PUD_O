@@ -122,3 +122,20 @@ void Package::debugPrintPackage() const {
 }
 
 //-----------------------------------------------------------------
+
+Package &Package::operator=(const Package &other) {
+  if(this == &other)
+    return *this;
+
+  version_ = other.version_;
+  compareSigns_ = other.compareSigns_;
+  category_ = other.category_;
+  name_ = other.name_;
+  slot_ = other.slot_;
+  repository_ = other.repository_;
+  useFlags_ = other.useFlags_;
+
+  return *this;
+}
+
+//-----------------------------------------------------------------

@@ -136,6 +136,7 @@ void PackageUseDirHandler::correctExcludeFilesPaths() {
 void PackageUseDirHandler::generateNewConfigFiles() const {
 
   // debug
+  /*
   Package currentPackage = packagesHolder_.getPackages().at(0);
   std::filesystem::path currentPath =
       getNewConfigPath(currentPackage.getCategory());
@@ -146,12 +147,7 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
   std::cout << currentPackageStr << '\n';
   size_t countOfFiles{1};
 
-  /*
-  std::ofstream currentFile(currentPath.string(), std::ios::app |
-  std::ios::binary); if(currentFile.is_open())
-    currentFile.write(reinterpret_cast<char *>(currentPath.string().data()),
-                      currentPath.string().size());
-                      */
+
   std::ofstream currentFile(currentPath.string(),
                             std::ios::app | std::ios::binary);
 
@@ -182,15 +178,14 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
     //
     // std::filesystem::path nextPath =
     //   getNewConfigPath(packagesHolder_.getPackages().at(i).getCategory());
-    /*
-    if (nextPath != currentPath) {
-      currentPath = nextPath;
-      ++countOfFiles;
-      std::cout << currentPath << '\n';
-    }
-*/
+//    if (nextPath != currentPath) {
+//      currentPath = nextPath;
+//      ++countOfFiles;
+//      std::cout << currentPath << '\n';
+//    }
   }
-  std::cout << "\nCount of files: " << countOfFiles << std::endl;
+   */
+  //std::cout << "\nCount of files: " << countOfFiles << std::endl;
   // end debug
 }
 

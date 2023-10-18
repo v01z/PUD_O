@@ -19,6 +19,8 @@ public:
   PackageVersion() = default;
   explicit PackageVersion(const std::string &);
 
+  PackageVersion& operator=(const PackageVersion&);
+
   const std::string &value() const;
   void setValue(const std::string &newVersion);
 

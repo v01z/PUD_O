@@ -26,6 +26,8 @@ public:
           const std::string &, const std::string &, const std::string &,
           const std::set<std::string> &);
 
+  Package& operator=(const Package&);
+
   void setUseFlags(const std::set<std::string> &useFlags);
 
   const std::set<std::string> &getUseFlags() const;
