@@ -135,12 +135,13 @@ void PackageUseDirHandler::correctExcludeFilesPaths() {
 
 void PackageUseDirHandler::generateNewConfigFiles() const {
 
-  // debug
-  /*
+  // assert packagesHolder_.getPackages() is sorted
+
   Package currentPackage = packagesHolder_.getPackages().at(0);
   std::filesystem::path currentPath =
       getNewConfigPath(currentPackage.getCategory());
-  std::string currentPackageStr = currentPackage.getFullPackageInfoStr();
+  std::string currentPackageStr = currentPackage.getFullPackageInfoStr() + '\n';
+  currentPackageStr.insert(0, "#\n# ******* " + currentPackage.getCategory() + " ********\n#\n");
 
   std::cout << "\n**************\n";
   std::cout << currentPath << '\n';
@@ -151,57 +152,77 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
   std::ofstream currentFile(currentPath.string(),
                             std::ios::app | std::ios::binary);
 
-  if (currentFile.is_open())
+  if (currentFile.is_open()) {
+    std::cout << "\nStart: Writing to " << currentPath << std::endl;
     currentFile.write(reinterpret_cast<char *>(currentPackageStr.data()),
                       currentPackageStr.size());
+  }
 
   Package previousPackage = currentPackage; // needs to implement operator=
 
-  for (size_t i{1}; i < packagesHolder_.getPackages().size(); ++i) {
-    //
+  for (size_t i{ 1 }; i < packagesHolder_.getPackages().size(); ++i) {
+
     currentPackage = packagesHolder_.getPackages().at(i);
-    if (previousPackage.getCategory() != currentPackage.getCategory()) {
-      currentFile.close();
+
+    if(getFirstPartOfCategory(currentPackage.getCategory()) !=
+                               getFirstPartOfCategory(previousPackage.getCategory()))
+    {
+      //debug
+      std::cout << "\n^^^^^^^ First part of category doesnt equal ^^^^^^^^\n" <<
+      previousPackage.getFullPackageInfoStr() << " and " << currentPackage.getFullPackageInfoStr()
+      << std::endl;
+
       currentPath = getNewConfigPath(currentPackage.getCategory());
-      currentFile =
-          std::ifstream(currentPath.string(), std::ios::app | std::ios::binary);
+      std::cout << "New path is: " << currentPath << std::endl; //debug
+
+      currentFile.clear();
+      currentFile.close();
+      currentFile.open(currentPath.string(), std::ios::app | std::ios::binary);
+
       ++countOfFiles;
     }
-    if (currentFile.is_open())
-      currentFile.write(reinterpret_cast<char *>(currentPackageStr.data(),
-                                                 currentPackageStr.size()));
 
-    previousPackage = currentPackage; // need to implement Package::operator=
+    if (currentFile.is_open()) // hmm, do we really need it?
+    {
+      currentPackageStr = currentPackage.getFullPackageInfoStr() + '\n';
 
-    //
-    // here: write to file current package str
-    //
-    // std::filesystem::path nextPath =
-    //   getNewConfigPath(packagesHolder_.getPackages().at(i).getCategory());
-//    if (nextPath != currentPath) {
-//      currentPath = nextPath;
-//      ++countOfFiles;
-//      std::cout << currentPath << '\n';
-//    }
+      if(previousPackage.getCategory() != currentPackage.getCategory())
+        currentPackageStr.insert(0, "#\n# ******* " + currentPackage.getCategory() + " ********\n#\n");
+
+      // if basicallyTheSame.. add #
+
+      std::cout << countOfFiles << ": Writing to " << currentPath << std::endl;
+      currentFile.write(reinterpret_cast<char *>(currentPackageStr.data()),
+                        currentPackageStr.size());
+    }
+
+    previousPackage = currentPackage;
+
   }
-   */
-  //std::cout << "\nCount of files: " << countOfFiles << std::endl;
-  // end debug
+  std::cout << "\nCount of files: " << countOfFiles << std::endl;
 }
 
 //-----------------------------------------------------------------
 
 const std::filesystem::path
-PackageUseDirHandler::getNewConfigPath(const std::string &inputStr) const {
+PackageUseDirHandler::getNewConfigPath(const std::string &category) const {
 
-  std::string tempStr{};
+  return std::filesystem::path{ PACKAGE_USE_DIR / getFirstPartOfCategory(category)};
+}
 
-  if (std::size_t found = inputStr.find('-', 0); found != std::string::npos)
-    tempStr = inputStr.substr(0, found);
+//-----------------------------------------------------------------
+
+const std::string
+PackageUseDirHandler::getFirstPartOfCategory(const std::string &categoryStr) const {
+
+  std::string retValStr{};
+
+  if (std::size_t found = categoryStr.find('-', 0); found != std::string::npos)
+    retValStr = categoryStr.substr(0, found);
   else
-    tempStr = inputStr;
+    retValStr = categoryStr;
 
-  return std::filesystem::path{PACKAGE_USE_DIR / tempStr};
+  return retValStr;
 }
 
 //-----------------------------------------------------------------

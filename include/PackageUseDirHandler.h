@@ -7,9 +7,8 @@
 //-----------------------------------------------------------------
 
 class PackageUseDirHandler {
-  // const std::filesystem::path PACKAGE_USE_DIR{"/home/knight/temp/package.use"
-  // };
-  const std::filesystem::path PACKAGE_USE_DIR{"/home/bcat/temp/package.use"};
+   const std::filesystem::path PACKAGE_USE_DIR{"/home/knight/temp/package.use"};
+  //const std::filesystem::path PACKAGE_USE_DIR{"/home/bcat/temp/package.use"};
   const std::filesystem::path TEMP_DIR_STR{"/tmp/backup_of_package_use"};
 
   std::vector<std::filesystem::path> filesToExclude_;
@@ -25,6 +24,7 @@ class PackageUseDirHandler {
   void removeFile(const std::string &) const;
   void correctExcludeFilesPaths();
   void generateNewConfigFiles() const;
+  const std::string getFirstPartOfCategory(const std::string&) const;
   const std::filesystem::path getNewConfigPath(const std::string &) const;
 
 public:
