@@ -15,15 +15,19 @@ PackageUseDirHandler::PackageUseDirHandler(
 
     std::vector<std::filesystem::path> configsPaths;
     fillFilesPaths(configsPaths, PACKAGE_USE_DIR);
+
+    size_t filesCount{};
     for (const auto &path : configsPaths) {
       updatePackageHolder(getFileBuff(path));
       removeFile(path);
+      ++filesCount;
     }
 
+    std::cout << '\n' << filesCount << " file(s) removed.\n";
+    printExcludeFilesVec();
+
     packagesHolder_.sort();
-    // debug:
     generateNewConfigFiles();
-    // end debug
   } catch (...) {
     throw;
   }
@@ -38,7 +42,9 @@ void PackageUseDirHandler::makeBackup() const {
                               std::filesystem::copy_options::update_existing);
 
     std::cout << "\nBackup of configs from " << PACKAGE_USE_DIR
-              << " created in " << TEMP_DIR_STR << ".\n";
+              << " has been created in " << TEMP_DIR_STR <<
+        ". You can get them from there if something goes wrong. " <<
+            "But do not forget that after rebooting system they will be deleted.\n\n";
   } catch (...) {
     throw;
   }
@@ -114,6 +120,7 @@ const PackagesHolder &PackageUseDirHandler::getPackagesHolder() const {
 void PackageUseDirHandler::removeFile(const std::string &fileToRemove) const {
   try {
     std::filesystem::remove(fileToRemove);
+    std::cout << "File " << KRED << fileToRemove << KNRM << " removed.\n";
   } catch (...) {
     throw;
   }
@@ -138,27 +145,24 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
   // assert packagesHolder_.getPackages() is sorted
 
   Package currentPackage = packagesHolder_.getPackages().at(0);
+  Package previousPackage = currentPackage;
+
   std::filesystem::path currentPath =
       getNewConfigPath(currentPackage.getCategory());
   std::string currentPackageStr = currentPackage.getFullPackageInfoStr() + '\n';
-  currentPackageStr.insert(0, "#\n# ******* " + currentPackage.getCategory() + " ********\n#\n");
+  currentPackageStr.insert(0, "#\n# ------- " + currentPackage.getCategory() + " --------\n#\n");
 
-  std::cout << "\n**************\n";
-  std::cout << currentPath << '\n';
-  std::cout << currentPackageStr << '\n';
   size_t countOfFiles{1};
 
-
+  std::cout << "\nCreating file " << KGRN << currentPath << KNRM << '\n';
   std::ofstream currentFile(currentPath.string(),
                             std::ios::app | std::ios::binary);
 
   if (currentFile.is_open()) {
-    std::cout << "\nStart: Writing to " << currentPath << std::endl;
     currentFile.write(reinterpret_cast<char *>(currentPackageStr.data()),
                       currentPackageStr.size());
   }
 
-  Package previousPackage = currentPackage; // needs to implement operator=
 
   for (size_t i{ 1 }; i < packagesHolder_.getPackages().size(); ++i) {
 
@@ -167,31 +171,26 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
     if(getFirstPartOfCategory(currentPackage.getCategory()) !=
                                getFirstPartOfCategory(previousPackage.getCategory()))
     {
-      //debug
-      std::cout << "\n^^^^^^^ First part of category doesnt equal ^^^^^^^^\n" <<
-      previousPackage.getFullPackageInfoStr() << " and " << currentPackage.getFullPackageInfoStr()
-      << std::endl;
-
       currentPath = getNewConfigPath(currentPackage.getCategory());
-      std::cout << "New path is: " << currentPath << std::endl; //debug
 
       currentFile.clear();
       currentFile.close();
+
+      std::cout << "Creating file " << KGRN << currentPath << KNRM << '\n';
       currentFile.open(currentPath.string(), std::ios::app | std::ios::binary);
 
       ++countOfFiles;
     }
 
-    if (currentFile.is_open()) // hmm, do we really need it?
+    if (currentFile.is_open())
     {
       currentPackageStr = currentPackage.getFullPackageInfoStr() + '\n';
 
+      if(previousPackage.getName() != currentPackage.getName())
+        currentPackageStr.insert(0, "#\n");
       if(previousPackage.getCategory() != currentPackage.getCategory())
-        currentPackageStr.insert(0, "#\n# ******* " + currentPackage.getCategory() + " ********\n#\n");
+        currentPackageStr.insert(0, "#\n# ------- " + currentPackage.getCategory() + " --------\n#\n");
 
-      // if basicallyTheSame.. add #
-
-      std::cout << countOfFiles << ": Writing to " << currentPath << std::endl;
       currentFile.write(reinterpret_cast<char *>(currentPackageStr.data()),
                         currentPackageStr.size());
     }
@@ -199,7 +198,7 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
     previousPackage = currentPackage;
 
   }
-  std::cout << "\nCount of files: " << countOfFiles << std::endl;
+  std::cout << '\n' << countOfFiles << " config file(s) created." << std::endl;
 }
 
 //-----------------------------------------------------------------
@@ -223,6 +222,17 @@ PackageUseDirHandler::getFirstPartOfCategory(const std::string &categoryStr) con
     retValStr = categoryStr;
 
   return retValStr;
+}
+
+//-----------------------------------------------------------------
+
+void PackageUseDirHandler::printExcludeFilesVec() const {
+  if(filesToExclude_.empty())
+    return;
+
+  std::cout << "Skipped " << filesToExclude_.size() << " file(s):\n";
+  for(const auto &fileName : filesToExclude_)
+    std::cout << KYEL << fileName << KNRM << '\n';
 }
 
 //-----------------------------------------------------------------

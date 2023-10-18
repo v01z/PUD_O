@@ -107,22 +107,6 @@ const std::string Package::getFullPackageInfoStr() const {
 
 //-----------------------------------------------------------------
 
-void Package::debugPrintPackage() const {
-  std::cout << "\nPackage: " << getFullPackageInfoStr() << '\n';
-  std::cout << "Compare sign(s): " << compareSigns_ << '\n';
-  std::cout << "Category: " << category_ << '\n';
-  std::cout << "Name: " << name_ << '\n';
-  std::cout << "Version: " << version_.value() << '\n';
-  std::cout << "Slot: " << slot_ << '\n';
-  std::cout << "Repository: " << repository_ << '\n';
-
-  std::cout << "USE flags: ";
-  std::ranges::for_each(useFlags_, [](auto &&use) { std::cout << use << ' '; });
-  std::cout << "\nCount of use flags: " << useFlags_.size() << std::endl;
-}
-
-//-----------------------------------------------------------------
-
 Package &Package::operator=(const Package &other) {
   if(this == &other)
     return *this;

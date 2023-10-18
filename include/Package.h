@@ -43,9 +43,6 @@ public:
   bool operator<(const Package &) const;
 
   const std::string getFullPackageInfoStr() const;
-
-  // func for debug purposes
-  void debugPrintPackage() const;
 };
 
 //-----------------------------------------------------------------

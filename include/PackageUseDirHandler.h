@@ -4,6 +4,12 @@
 #include "PackagesHolder.h"
 #include <filesystem>
 
+#define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KMAG  "\x1B[35m"
+
 //-----------------------------------------------------------------
 
 class PackageUseDirHandler {
@@ -26,6 +32,7 @@ class PackageUseDirHandler {
   void generateNewConfigFiles() const;
   const std::string getFirstPartOfCategory(const std::string&) const;
   const std::filesystem::path getNewConfigPath(const std::string &) const;
+  void printExcludeFilesVec() const;
 
 public:
   PackageUseDirHandler() = delete;

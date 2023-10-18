@@ -1,30 +1,12 @@
 #include "PackageUseDirHandler.h"
-#include <fstream> //debug
 #include <iostream>
-
-//debug
-void debugShowPackages(const PackageUseDirHandler &packageUseDirHandler){
-  auto pkgs = packageUseDirHandler.getPackagesHolder().getPackages();
-  for (size_t i{}; i < pkgs.size(); ++i)
-    std::cout << pkgs.at(i).getFullPackageInfoStr()
-    << std::endl;
-  std::cout << "Size is: " << pkgs.size()
-  << std::endl;
-}
-
-//debug too
-void writeWholeVecToFile(const PackageUseDirHandler &packageUseDirHandler){
-  std::ofstream file("/home/knight/temp/wholeVec.txt");
-  auto vec = packageUseDirHandler.getPackagesHolder().getPackages();
-  for(const auto &pckg: vec)
-  {
-    file << (pckg.getFullPackageInfoStr() + '\n');
-  }
-}
 
 //-----------------------------------------------------------------
 
 int main(int argc, char **argv) {
+
+  std::cout << KMAG << "PUD_O: Package use dir organizer for Gentoo Linux"
+      << KNRM << std::endl;
 
   if (argc == 2 && std::string(argv[1]) == "--help")
   {
@@ -43,8 +25,6 @@ int main(int argc, char **argv) {
 
   try {
     PackageUseDirHandler packageUseDirHandler{ std::move(argvVec) };
-    //debugShowPackages(packageUseDirHandler);
-    writeWholeVecToFile(packageUseDirHandler);
   }
   catch(std::exception &exc)
   {
