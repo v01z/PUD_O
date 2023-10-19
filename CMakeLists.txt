@@ -20,5 +20,6 @@ else()
             "${PROJECT_SOURCE_DIR}/include/*.h"
             "${PROJECT_SOURCE_DIR}/src/*.cpp")
         add_executable(${APP_NAME} ${ALL_SRCS})
+        install(TARGETS ${APP_NAME})
     endif()
 endif()
