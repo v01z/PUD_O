@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv) {
 
-  std::cout << KMAG << "PUD_O: Package use dir organizer for Gentoo Linux"
+  std::cout << KMAG << "pudo: Package use dir organizer for Gentoo Linux"
       << KNRM << std::endl;
 
   if (argc == 2 && std::string(argv[1]) == "--help")

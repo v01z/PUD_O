@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(PUD_O)
+project(pudo)
 
 if(NOT LINUX)
         message(FATAL_ERROR "You can not do this at all, CMake will exit.")
