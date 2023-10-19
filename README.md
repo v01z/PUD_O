@@ -1,4 +1,4 @@
-# PUD_O
+# pudo
 **Package Use Dir Organizer** for Gentoo Linux.
 <br>
 The application aims to help organize configuration settings located inside */etc/portage/package.use* directory. It removes all commented lines, sorts use-flags on each package and sorts all packages list, reorganizes filenames bringing them to the form of category names.
