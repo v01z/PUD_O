@@ -14,6 +14,10 @@ The application aims to help organize configuration settings located inside */et
 ## Usage
 `sudo ./pudo`
 <br><br>
-If you want to prevent some config files from being get modified, then add a keyword "--exclude" and list all of them separated by space, for example:
+If you want to prevent some config files from being get modified, then add a keyword *"--exclude"* and list all of them separated by space, for example:
 <br>
 `sudo ./pudo --exclude steam libre`
+
+
+## TODO in the future
+Removing duplicates and managing lines that contain the same package name but have different version info will be implemented further and not included in the current release.

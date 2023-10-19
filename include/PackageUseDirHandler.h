@@ -13,8 +13,7 @@
 //-----------------------------------------------------------------
 
 class PackageUseDirHandler {
-   const std::filesystem::path PACKAGE_USE_DIR{"/home/knight/temp/package.use"};
-  //const std::filesystem::path PACKAGE_USE_DIR{"/home/bcat/temp/package.use"};
+  const std::filesystem::path PACKAGE_USE_DIR{"/etc/portage/package.use"};
   const std::filesystem::path TEMP_DIR_STR{"/tmp/backup_of_package_use"};
 
   std::vector<std::filesystem::path> filesToExclude_;

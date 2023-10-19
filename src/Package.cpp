@@ -1,6 +1,5 @@
 #include "Package.h"
 #include <algorithm>
-#include <iostream>
 
 //-----------------------------------------------------------------
 
