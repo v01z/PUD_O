@@ -150,7 +150,6 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
   std::filesystem::path currentPath =
       getNewConfigPath(currentPackage.getCategory());
   std::string currentPackageStr = currentPackage.getFullPackageInfoStr() + '\n';
-  currentPackageStr.insert(0, "#\n# ------- " + currentPackage.getCategory() + " --------\n#\n");
 
   size_t countOfFiles{1};
 
@@ -190,7 +189,6 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
         currentPackageStr.insert(0, "#\n");
 
       if(previousPackage.getCategory() != currentPackage.getCategory())
-        //currentPackageStr.insert(0, "#\n# ------- " + currentPackage.getCategory() + " --------\n#\n");
         currentPackageStr.insert(0, "#\n");
 
       currentFile.write(reinterpret_cast<char *>(currentPackageStr.data()),
