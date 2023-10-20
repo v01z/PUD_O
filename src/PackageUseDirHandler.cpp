@@ -142,7 +142,7 @@ void PackageUseDirHandler::correctExcludeFilesPaths() {
 
 void PackageUseDirHandler::generateNewConfigFiles() const {
 
-  // assert packagesHolder_.getPackages() is sorted
+  // assert (packagesHolder_.getPackages() is sorted)
 
   Package currentPackage = packagesHolder_.getPackages().at(0);
   Package previousPackage = currentPackage;
@@ -188,8 +188,10 @@ void PackageUseDirHandler::generateNewConfigFiles() const {
 
       if(previousPackage.getName() != currentPackage.getName())
         currentPackageStr.insert(0, "#\n");
+
       if(previousPackage.getCategory() != currentPackage.getCategory())
-        currentPackageStr.insert(0, "#\n# ------- " + currentPackage.getCategory() + " --------\n#\n");
+        //currentPackageStr.insert(0, "#\n# ------- " + currentPackage.getCategory() + " --------\n#\n");
+        currentPackageStr.insert(0, "#\n");
 
       currentFile.write(reinterpret_cast<char *>(currentPackageStr.data()),
                         currentPackageStr.size());

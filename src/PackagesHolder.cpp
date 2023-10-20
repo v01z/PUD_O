@@ -83,13 +83,13 @@ bool PackagesHolder::addPackage(const std::string &inputStr) {
   if (matched) {
     packages_.push_back({
         PackageVersion(getStrWithoutFrontPrefix(results[7], 1)), /* version_ */
-        results[1], /* compareSigns_ */
-        results[2], /* category_ */
+        results[1],    /* compareSigns_ */
+        results[2],    /* category_ */
         // results[3], /* delimeter */
-        results[4],                              /* name_ */
+        results[4],    /* name_ */
         getStrWithoutFrontPrefix(results[8], 1), /* slot_ */
         getStrWithoutFrontPrefix(results[9], 2), /* repository */
-        getSetFromString(results[10])            /* use - flags */
+        getSetFromString(results[10])                     /* use - flags */
     });
 
     return true;
