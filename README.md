@@ -11,12 +11,15 @@ The application aims to help organize configuration settings located inside */et
 `cmake --build .`
 <br>
 
+Alternatively it is possible to install **pudo** system wide using [ready ebuild](https://github.com/cyberhoffman/portage/tree/main/app-portage/pudo).
+
 ## Usage
 `sudo ./pudo`
 <br><br>
 If you want to prevent some config files from being get modified, then add a keyword *"--exclude"* and list all of them separated by space, for example:
 <br>
 `sudo ./pudo --exclude steam libre`
+
 
 
 ## TODO in the future

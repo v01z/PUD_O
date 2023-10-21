@@ -9,7 +9,6 @@ else()
         OUTPUT_VARIABLE LSB_RELEASE_ID
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-    # TOD0: What if sys-apps/lsb-release doesnt installed?
     if(NOT LSB_RELEASE_ID STREQUAL "Gentoo")
         message(FATAL_ERROR "You should have got Gentoo Linux, CMake will exit.")
     else()
