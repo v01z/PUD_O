@@ -1,5 +1,10 @@
 # pudo
 **Package Use Dir Organizer** for Gentoo Linux.
+
+
+# <span style="color:red">Project moved to [codeberg.](https://codeberg.org/v01z/pudo) </span>
+
+
 <br>
 The application aims to help organize configuration settings located inside */etc/portage/package.use* directory. It removes all commented lines, sorts use-flags on each package and sorts all packages list, reorganizes filenames bringing them to the form of category names.
 
